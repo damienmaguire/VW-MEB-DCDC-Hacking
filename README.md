@@ -7,6 +7,8 @@ Tested on a bench with 12V supply and a Prius HV capacitor on the HV bus for pre
 
 BMW PHEV Pack supplying 380V on HV side for standard DCDC 12V support.
 
+**Requires CAN-FD.** The bus runs at 500 kbit/s nominal / 2 Mbit/s data. Standard CAN will not work.
+
 ## Wiring
 
 <img width="672" height="837" alt="image-1-1" src="https://github.com/user-attachments/assets/1160886c-5d5e-4787-9fc7-5d76d3904086" />
@@ -14,8 +16,8 @@ BMW PHEV Pack supplying 380V on HV side for standard DCDC 12V support.
 ## Hardware
 
 - Bosch Gen4H13 DC-DC converter (diag address 0xB9)
-- CAN-FD at 500 kbit/s / 2 Mbit/s
-- Peak USB adapter with SocketCAN
+- CAN-FD capable interface (Peak USB recommended)
+- SocketCAN or [Tom-evnut's SavvyCAN fork](https://github.com/Tom-evnut/SavvyCAN/tree/fork-ci) (fork-ci branch has proper CAN-FD support)
 - 12V power supply
 - HV capacitor (Prius) on the HV bus to limit residual voltage
 
@@ -96,7 +98,8 @@ Clearing the crash lock requires further investigation.
 
 - Python 3
 - python-can
-- SocketCAN interface (`can0`)
+- SocketCAN interface (`can0`) with CAN-FD enabled
+- Or [Tom-evnut/SavvyCAN](https://github.com/Tom-evnut/SavvyCAN/tree/fork-ci) (fork-ci branch)
 
 ## License
 
