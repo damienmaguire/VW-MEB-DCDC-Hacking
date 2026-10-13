@@ -1,4 +1,5 @@
 ## VW MEB DC-DC Reverse Engineering
+<img width="768" height="432" alt="dcdc" src="https://github.com/user-attachments/assets/890fcc1f-a5a3-4edc-9e93-c11e266e921e" />
 
 Bench control scripts for the VW MEB DC-DC converter (Bosch Gen4H13, part 1EA907190G).
 
