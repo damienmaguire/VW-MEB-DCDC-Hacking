@@ -1,8 +1,11 @@
-# MEB DC-DC Bench Control
+#VW MEB DC-DC Reverse Engineering
 
 Bench control scripts for the VW MEB DC-DC converter (Bosch Gen4H13, part 1EA907190G).
 
 Tested on a bench with 12V supply and a Prius HV capacitor on the HV bus.
+
+## Wiring
+<img width="672" height="837" alt="image-1-1" src="https://github.com/user-attachments/assets/1160886c-5d5e-4787-9fc7-5d76d3904086" />
 
 ## Hardware
 
