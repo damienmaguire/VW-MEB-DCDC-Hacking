@@ -39,6 +39,16 @@ Precharges the HV bus and maintains it between 350V and 360V using hysteresis.
 python3 meb_dcdc_precharge.py
 ```
 
+### `meb_dcdc_replay.py`
+
+Clears all DTCs including persistent ones (crash lock, HV interrupt). Self-contained replay of a verified clear sequence.
+
+```bash
+python3 meb_dcdc_replay.py
+```
+
+DTCs clear by ~frame 300 (~15 seconds). Power-cycle the unit afterwards.
+
 ## CAN Messages
 
 ### Transmitted (TX)
@@ -86,13 +96,53 @@ The PDU constant is **appended** after the payload, not prepended:
 
 PDU constants are from the [Battery-Emulator](https://github.com/dalathegreat/Battery-Emulator) project.
 
-## Crash Lock
+### `meb_dcdc_replay.py`
 
-The DC-DC has a crash lock that prevents operation after a crash event is detected. This is stored as a protected DTC and cannot be cleared by a standard DTC clear (service 14).
+Clears all DTCs including persistent ones (crash lock, HV interrupt). Self-contained replay of a verified clear sequence.
 
-The unit is not SFD protected. A UDS routine (0x0302) returns a positive response but does not clear the lock without additional preconditions.
+```bash
+python3 meb_dcdc_replay.py
+```
 
-Clearing the crash lock requires further investigation.
+DTCs clear by ~frame 300 (~15 seconds). Power-cycle the unit afterwards.
+
+## DTC Types
+
+The DC-DC stores two categories of DTCs:
+
+### Standard DTCs
+
+Communication and operational faults that clear when the condition resolves or with a standard DTC clear (service 14). Examples:
+- Lost communication with BMS
+- Bus performance faults
+- Voltage sensor range/performance
+
+### Persistent DTCs
+
+Protected faults that survive power cycles and standard DTC clears. These require specific vehicle conditions to clear:
+
+| DTC | Code | Description |
+|-----|------|-------------|
+| Crash Lock | - | Latched after crash detection. Prevents operation. |
+| P1BC300 | 0x54 0xED | HV interruption detected. Prevents operation. |
+| P0E5600 | 0x0D 0x65 | Input voltage too low |
+
+**Clearing persistent DTCs:**
+
+The unit clears these when it sees a valid vehicle environment. No diagnostic session or clear command is required — just the right frames on the bus for ~15 seconds.
+
+Minimum frame set (from verified log):
+
+| ID | Name | Interval | Purpose |
+|----|------|----------|---------|
+| 0x3C0 | Klemmen_Status_01 | 100ms | Ignition (Kl15) on |
+| 0x503 | HVK_01 | 100ms | Mode request |
+| 0x5A2 | - | 500ms | Vehicle status |
+| 0x6B2 | Diagnose_01 | 1000ms | Unlearn counter, odometer |
+| 0x6B7 | - | 1000ms | - |
+| 0x700 | Tester Present | 1000ms | Keep diagnostic session alive |
+
+The `meb_dcdc_replay.py` script sends this exact sequence. After ~15 seconds, poll DTCs — all should be gone. Power-cycle to confirm they stay clear.
 
 ## Requirements
 
